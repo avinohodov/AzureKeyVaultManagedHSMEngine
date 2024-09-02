@@ -1,0 +1,74 @@
+name: Build and Upload HSM Engine
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libssl-dev libcurl4-openssl-dev libjson-c-dev cmake devscripts dpkg-dev gnupg
+
+    - name: Build HSM Engine
+      run: |
+        cd src
+        mkdir -p build
+        cd build
+        cmake ..
+        make
+
+    - name: Create DEBIAN Directory and Control File
+      run: |
+        mkdir -p ~/hsm-engine-deb/DEBIAN
+        echo "Package: hsm-engine" > ~/hsm-engine-deb/DEBIAN/control
+        echo "Version: 1.0-1" >> ~/hsm-engine-deb/DEBIAN/control
+        echo "Section: utils" >> ~/hsm-engine-deb/DEBIAN/control
+        echo "Priority: optional" >> ~/hsm-engine-deb/DEBIAN/control
+        echo "Architecture: amd64" >> ~/hsm-engine-deb/DEBIAN/control
+        echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/DEBIAN/control
+        echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/DEBIAN/control
+
+    - name: Install HSM Engine and Package
+      run: |
+        cd src/build
+        make install DESTDIR=~/hsm-engine-deb
+        cd ~
+        dpkg-deb --build ~/hsm-engine-deb hsm-engine_1.0-1_amd64.deb
+
+    - name: Create debian directory and changelog
+      run: |
+        mkdir -p ~/hsm-engine-deb/debian
+        echo "hsm-engine (1.0-1) unstable; urgency=low" > ~/hsm-engine-deb/debian/changelog
+        echo "" >> ~/hsm-engine-deb/debian/changelog
+        echo "  * Initial release" >> ~/hsm-engine-deb/debian/changelog
+        echo "" >> ~/hsm-engine-deb/debian/changelog
+        echo " -- Andrey V <andrey@kima.finance>  $(date -R)" >> ~/hsm-engine-deb/debian/changelog
+
+    - name: Generate .changes File
+      run: |
+        cd ~/hsm-engine-deb
+        dpkg-gencontrol
+        cd ~
+        dpkg-deb --build hsm-engine-deb
+        dpkg-genchanges > hsm-engine_1.0-1_amd64.changes
+
+    - name: Sign and Upload to PPA
+      env:
+        GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
+      run: |
+        echo "${GPG_KEY}" | gpg --batch --import
+        echo "passphrase=${GPG_PASSPHRASE}" > ~/.gnupg/gpg.conf
+        echo "use-agent" >> ~/.gnupg/gpg.conf
+        debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_amd64.changes
+        dput ppa:andrey-vin/kima-hsm-ppa hsm-engine_1.0-1_amd64.changes
