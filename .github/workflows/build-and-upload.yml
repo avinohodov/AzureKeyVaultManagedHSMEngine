@@ -29,14 +29,15 @@ jobs:
     - name: Create DEBIAN Directory and Control File
       run: |
         mkdir -p ~/hsm-engine-deb/DEBIAN
-        echo "Package: hsm-engine" > ~/hsm-engine-deb/DEBIAN/control
-        echo "Version: 1.0-1" >> ~/hsm-engine-deb/DEBIAN/control
-        echo "Section: utils" >> ~/hsm-engine-deb/DEBIAN/control
-        echo "Priority: optional" >> ~/hsm-engine-deb/DEBIAN/control
-        echo "Architecture: amd64" >> ~/hsm-engine-deb/DEBIAN/control
-        echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/DEBIAN/control
-        echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/DEBIAN/control
-
+        mkdir -p ~/hsm-engine-deb/debian
+        echo "Package: hsm-engine" > ~/hsm-engine-deb/debian/control
+        echo "Version: 1.0-1" >> ~/hsm-engine-deb/debian/control
+        echo "Section: utils" >> ~/hsm-engine-deb/debian/control
+        echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
+        echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
+        echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
+        echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
+      
     - name: Install HSM Engine and Package
       run: |
         cd src/build
