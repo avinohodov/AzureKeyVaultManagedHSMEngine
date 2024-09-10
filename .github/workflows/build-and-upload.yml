@@ -58,6 +58,11 @@ jobs:
         echo "\tdh $@" >> ~/hsm-engine-deb/debian/rules
         chmod +x ~/hsm-engine-deb/debian/rules
 
+    - name: Create Source Tarball
+      run: |
+        cd ~
+        tar -czf hsm-engine_1.0.orig.tar.gz hsm-engine-deb
+
     - name: Build Source Package
       run: |
         cd ~/hsm-engine-deb
