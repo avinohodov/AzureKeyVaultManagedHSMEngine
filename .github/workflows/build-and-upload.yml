@@ -60,7 +60,7 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo "\tdh $@" >> ~/hsm-engine-deb/debian/rules
+        echo "	dh \$@" >> ~/hsm-engine-deb/debian/rules
         chmod +x ~/hsm-engine-deb/debian/rules
 
     - name: Create Source Tarball
