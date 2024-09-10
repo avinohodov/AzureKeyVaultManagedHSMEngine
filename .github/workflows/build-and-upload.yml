@@ -42,6 +42,15 @@ jobs:
         cd src/build
         make install DESTDIR=~/hsm-engine-deb
 
+    - name: Create debian directory and changelog
+      run: |
+        mkdir -p ~/hsm-engine-deb/debian
+        echo "hsm-engine (1.0-1) unstable; urgency=low" > ~/hsm-engine-deb/debian/changelog
+        echo "" >> ~/hsm-engine-deb/debian/changelog
+        echo "  * Initial release" >> ~/hsm-engine-deb/debian/changelog
+        echo "" >> ~/hsm-engine-deb/debian/changelog
+        echo " -- Andrey V <andrey@kima.finance>  $(date -R)" >> ~/hsm-engine-deb/debian/changelog
+
     - name: Build Source Package
       run: |
         cd ~/hsm-engine-deb
