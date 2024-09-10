@@ -20,8 +20,8 @@ jobs:
 
     - name: Import GPG key (check early)
       run: |
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import || exit 1
-        gpg --list-keys || exit 1
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+        gpg --list-keys
 
     - name: Build HSM Engine
       run: |
@@ -86,8 +86,6 @@ jobs:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
       run: |
-        echo "${GPG_KEY}" | gpg --batch --import
-        echo "passphrase=${GPG_PASSPHRASE}" > ~/.gnupg/gpg.conf
-        echo "use-agent" >> ~/.gnupg/gpg.conf
+        echo "${GPG_KEY}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${GPG_PASSPHRASE}" --import
         debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_amd64.changes
         dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_amd64.changes
