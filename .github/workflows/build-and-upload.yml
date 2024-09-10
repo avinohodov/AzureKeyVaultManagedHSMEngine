@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04  # Используем Ubuntu 24.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout repository
@@ -35,6 +35,7 @@ jobs:
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
         echo "Build-Depends: debhelper-compat (= 13), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
+        echo "Standards-Version: 4.6.0" >> ~/hsm-engine-deb/debian/control
         echo "" >> ~/hsm-engine-deb/debian/control
         echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
         echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
