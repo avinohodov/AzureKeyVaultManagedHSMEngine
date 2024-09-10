@@ -60,17 +60,13 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules  # Важно: используйте табуляцию, а не пробелы
+        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию
         chmod +x ~/hsm-engine-deb/debian/rules
 
     - name: Create Source Tarball
       run: |
         cd ~
         tar -czf hsm-engine_1.0.orig.tar.gz hsm-engine-deb
-
-    - name: Create debian/compat
-      run: |
-        echo "13" > ~/hsm-engine-deb/debian/compat
 
     - name: Build Source Package
       run: |
