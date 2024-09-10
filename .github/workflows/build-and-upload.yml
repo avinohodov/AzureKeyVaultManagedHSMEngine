@@ -31,12 +31,16 @@ jobs:
         cmake ..
         make
 
-    - name: Verify e_akv.so exists
+    - name: Verify e_akv.so exists (debugging step)
       run: |
         if [ ! -f src/build/e_akv.so ]; then
-          echo "e_akv.so is missing!"
+          echo "e_akv.so is missing after build!"
           exit 1
         fi
+
+    - name: List files in build directory (debugging step)
+      run: |
+        ls -l src/build/
 
     - name: Copy e_akv.so to DEBIAN Directory
       run: |
