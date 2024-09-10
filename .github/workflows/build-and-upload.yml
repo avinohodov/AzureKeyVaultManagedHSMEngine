@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04  # Используем Ubuntu 24.04
 
     steps:
     - name: Checkout repository
@@ -16,7 +16,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libssl-dev libcurl4-openssl-dev libjson-c-dev cmake devscripts dpkg-dev gnupg lintian debhelper
+        sudo apt-get install -y build-essential libssl-dev libcurl4-openssl-dev libjson-c-dev cmake devscripts dpkg-dev gnupg lintian
 
     - name: Build HSM Engine
       run: |
@@ -35,22 +35,21 @@ jobs:
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
         echo "Build-Depends: debhelper-compat (= 13), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
-        echo "Standards-Version: 4.5.0" >> ~/hsm-engine-deb/debian/control
         echo "" >> ~/hsm-engine-deb/debian/control
         echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
         echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
         echo "Depends: \${shlibs:Depends}, \${misc:Depends}" >> ~/hsm-engine-deb/debian/control
         echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
-
+      
     - name: Install HSM Engine and Package
       run: |
         cd src/build
         make install DESTDIR=~/hsm-engine-deb
 
-    - name: Create debian directory and changelog
+    - name: Create debian/changelog
       run: |
         mkdir -p ~/hsm-engine-deb/debian
-        echo "hsm-engine (1.0-1) unstable; urgency=low" > ~/hsm-engine-deb/debian/changelog
+        echo "hsm-engine (1.0-1) jammy; urgency=low" > ~/hsm-engine-deb/debian/changelog
         echo "" >> ~/hsm-engine-deb/debian/changelog
         echo "  * Initial release" >> ~/hsm-engine-deb/debian/changelog
         echo "" >> ~/hsm-engine-deb/debian/changelog
@@ -60,12 +59,13 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo "	dh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию перед dh
+        echo "\tdh \$@" >> ~/hsm-engine-deb/debian/rules
         chmod +x ~/hsm-engine-deb/debian/rules
 
-    - name: Remove debian/compat
+    - name: Create debian/source/format
       run: |
-        rm -f ~/hsm-engine-deb/debian/compat  # Удаление файла совместимости
+        mkdir -p ~/hsm-engine-deb/debian/source
+        echo "3.0 (quilt)" > ~/hsm-engine-deb/debian/source/format
 
     - name: Create Source Tarball
       run: |
@@ -86,5 +86,5 @@ jobs:
         echo "${GPG_KEY}" | gpg --batch --import
         echo "passphrase=${GPG_PASSPHRASE}" > ~/.gnupg/gpg.conf
         echo "use-agent" >> ~/.gnupg/gpg.conf
-        debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_amd64.changes
-        dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_amd64.changes
+        debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_source.changes
+        dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_source.changes
