@@ -31,6 +31,7 @@ jobs:
         mkdir -p ~/hsm-engine-deb/DEBIAN
         mkdir -p ~/hsm-engine-deb/debian
         echo "Source: hsm-engine" > ~/hsm-engine-deb/debian/control
+        echo "Standards-Version: 4.5.1" >> ~/hsm-engine-deb/debian/control
         echo "Section: utils" >> ~/hsm-engine-deb/debian/control
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
@@ -40,7 +41,6 @@ jobs:
         echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
         echo "Depends: \${shlibs:Depends}, \${misc:Depends}" >> ~/hsm-engine-deb/debian/control
         echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
-        echo "Standards-Version: 4.5.1" >> ~/hsm-engine-deb/debian/control
 
     - name: Install HSM Engine and Package
       run: |
@@ -60,7 +60,7 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию
+        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules
         chmod +x ~/hsm-engine-deb/debian/rules
 
     - name: Create Source Tarball
