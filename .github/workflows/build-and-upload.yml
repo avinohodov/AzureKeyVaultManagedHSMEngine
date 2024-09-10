@@ -41,7 +41,7 @@ jobs:
         echo "Depends: \${shlibs:Depends}, \${misc:Depends}" >> ~/hsm-engine-deb/debian/control
         echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
         echo "Standards-Version: 4.5.1" >> ~/hsm-engine-deb/debian/control
-      
+
     - name: Install HSM Engine and Package
       run: |
         cd src/build
@@ -60,7 +60,7 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo "\tdh $@" >> ~/hsm-engine-deb/debian/rules
+        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules  # Важно: используйте табуляцию, а не пробелы
         chmod +x ~/hsm-engine-deb/debian/rules
 
     - name: Create Source Tarball
