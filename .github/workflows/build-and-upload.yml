@@ -31,6 +31,11 @@ jobs:
         cmake ..
         make
 
+    - name: Copy e_akv.so to DEBIAN Directory
+      run: |
+        mkdir -p ~/hsm-engine-deb/usr/lib/x86_64-linux-gnu/engines-1.1/
+        cp src/build/e_akv.so ~/hsm-engine-deb/usr/lib/x86_64-linux-gnu/engines-1.1/
+    
     - name: Create DEBIAN Directory and Control File
       run: |
         mkdir -p ~/hsm-engine-deb/DEBIAN
@@ -87,5 +92,7 @@ jobs:
         LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
       run: |
         echo "${GPG_KEY}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${GPG_PASSPHRASE}" --import
+        gpg --pinentry-mode=loopback --batch --yes --passphrase "${GPG_PASSPHRASE}" --sign-key ${{ secrets.GPG_KEY_ID }}
         debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_source.changes
         dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_source.changes
+  
