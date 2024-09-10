@@ -20,7 +20,7 @@ jobs:
 
     - name: Import GPG key (check early)
       run: |
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --import
         gpg --list-keys
 
     - name: Build HSM Engine
@@ -57,7 +57,7 @@ jobs:
     - name: Create debian directory and changelog
       run: |
         mkdir -p ~/hsm-engine-deb/debian
-        echo "hsm-engine (1.0-1) unstable; urgency=low" > ~/hsm-engine-deb/debian/changelog
+        echo "hsm-engine (1.0-1) jammy; urgency=low" > ~/hsm-engine-deb/debian/changelog  # Изменяем "unstable" на реальный дистрибутив
         echo "" >> ~/hsm-engine-deb/debian/changelog
         echo "  * Initial release" >> ~/hsm-engine-deb/debian/changelog
         echo "" >> ~/hsm-engine-deb/debian/changelog
@@ -87,5 +87,5 @@ jobs:
         LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
       run: |
         echo "${GPG_KEY}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${GPG_PASSPHRASE}" --import
-        debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_amd64.changes
-        dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_amd64.changes
+        debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_source.changes
+        dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_source.changes
