@@ -59,7 +59,7 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo "\tdh \$@" >> ~/hsm-engine-deb/debian/rules
+        echo -e "\tdh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию, а не пробелы
         chmod +x ~/hsm-engine-deb/debian/rules
 
     - name: Create debian/source/format
