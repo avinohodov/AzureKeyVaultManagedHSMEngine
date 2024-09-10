@@ -23,6 +23,11 @@ jobs:
         echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --import
         gpg --list-keys
 
+    - name: Set GPG_TTY
+      run: |
+        export GPG_TTY=$(tty)
+        echo "GPG_TTY set to $(tty)"
+
     - name: Build HSM Engine
       run: |
         cd src
@@ -85,6 +90,11 @@ jobs:
       run: |
         cd ~
         tar -czf hsm-engine_1.0.orig.tar.gz hsm-engine-deb
+
+    - name: Include e_akv.so in Source Tarball
+      run: |
+        cd ~/hsm-engine-deb
+        tar --append -czf ../hsm-engine_1.0.orig.tar.gz usr/lib/x86_64-linux-gnu/engines-1.1/e_akv.so
 
     - name: Build Source Package
       run: |
