@@ -51,6 +51,13 @@ jobs:
         echo "" >> ~/hsm-engine-deb/debian/changelog
         echo " -- Andrey V <andrey@kima.finance>  $(date -R)" >> ~/hsm-engine-deb/debian/changelog
 
+    - name: Create debian/rules
+      run: |
+        echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
+        echo "%:" >> ~/hsm-engine-deb/debian/rules
+        echo "\tdh $@" >> ~/hsm-engine-deb/debian/rules
+        chmod +x ~/hsm-engine-deb/debian/rules
+
     - name: Build Source Package
       run: |
         cd ~/hsm-engine-deb
