@@ -31,11 +31,18 @@ jobs:
         cmake ..
         make
 
+    - name: Verify e_akv.so exists
+      run: |
+        if [ ! -f src/build/e_akv.so ]; then
+          echo "e_akv.so is missing!"
+          exit 1
+        fi
+
     - name: Copy e_akv.so to DEBIAN Directory
       run: |
         mkdir -p ~/hsm-engine-deb/usr/lib/x86_64-linux-gnu/engines-1.1/
         cp src/build/e_akv.so ~/hsm-engine-deb/usr/lib/x86_64-linux-gnu/engines-1.1/
-    
+
     - name: Create DEBIAN Directory and Control File
       run: |
         mkdir -p ~/hsm-engine-deb/DEBIAN
@@ -54,15 +61,10 @@ jobs:
         echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
         echo "3.0 (quilt)" > ~/hsm-engine-deb/debian/source/format
 
-    - name: Install HSM Engine and Package
-      run: |
-        cd src/build
-        make install DESTDIR=~/hsm-engine-deb
-
     - name: Create debian directory and changelog
       run: |
         mkdir -p ~/hsm-engine-deb/debian
-        echo "hsm-engine (1.0-1) jammy; urgency=low" > ~/hsm-engine-deb/debian/changelog  # Изменяем "unstable" на реальный дистрибутив
+        echo "hsm-engine (1.0-1) jammy; urgency=low" > ~/hsm-engine-deb/debian/changelog
         echo "" >> ~/hsm-engine-deb/debian/changelog
         echo "  * Initial release" >> ~/hsm-engine-deb/debian/changelog
         echo "" >> ~/hsm-engine-deb/debian/changelog
@@ -91,8 +93,8 @@ jobs:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
       run: |
+        export GPG_TTY=$(tty)
         echo "${GPG_KEY}" | gpg --batch --yes --pinentry-mode=loopback --passphrase "${GPG_PASSPHRASE}" --import
         gpg --pinentry-mode=loopback --batch --yes --passphrase "${GPG_PASSPHRASE}" --sign-key ${{ secrets.GPG_KEY_ID }}
         debsign --re-sign -k${{ secrets.GPG_KEY_ID }} hsm-engine_1.0-1_source.changes
         dput ppa:${{ secrets.LAUNCHPAD_USERNAME }}/kima-hsm-ppa hsm-engine_1.0-1_source.changes
-  
