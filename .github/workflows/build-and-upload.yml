@@ -30,17 +30,18 @@ jobs:
       run: |
         mkdir -p ~/hsm-engine-deb/DEBIAN
         mkdir -p ~/hsm-engine-deb/debian
+        mkdir -p ~/hsm-engine-deb/debian/source
         echo "Source: hsm-engine" > ~/hsm-engine-deb/debian/control
         echo "Standards-Version: 4.5.1" >> ~/hsm-engine-deb/debian/control
         echo "Section: utils" >> ~/hsm-engine-deb/debian/control
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
         echo "Build-Depends: debhelper-compat (= 13), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
-        echo "" >> ~/hsm-engine-deb/debian/control
         echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
         echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
         echo "Depends: \${shlibs:Depends}, \${misc:Depends}" >> ~/hsm-engine-deb/debian/control
         echo "Description: Azure Key Vault and Managed HSM Engine for OpenSSL" >> ~/hsm-engine-deb/debian/control
+        echo "3.0 (quilt)" > ~/hsm-engine-deb/debian/source/format
 
     - name: Install HSM Engine and Package
       run: |
