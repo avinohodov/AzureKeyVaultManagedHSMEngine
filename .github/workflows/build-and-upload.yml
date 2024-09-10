@@ -63,9 +63,9 @@ jobs:
         echo "	dh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию перед dh
         chmod +x ~/hsm-engine-deb/debian/rules
 
-    - name: Create debian/compat
+    - name: Remove debian/compat
       run: |
-        echo "13" > ~/hsm-engine-deb/debian/compat  # Уровень совместимости debhelper
+        rm -f ~/hsm-engine-deb/debian/compat  # Удаление файла совместимости
 
     - name: Create Source Tarball
       run: |
