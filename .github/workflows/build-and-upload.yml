@@ -34,7 +34,7 @@ jobs:
         echo "Section: utils" >> ~/hsm-engine-deb/debian/control
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
-        echo "Build-Depends: debhelper (>= 9), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
+        echo "Build-Depends: debhelper-compat (= 13), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
         echo "Standards-Version: 4.5.0" >> ~/hsm-engine-deb/debian/control
         echo "" >> ~/hsm-engine-deb/debian/control
         echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
@@ -60,8 +60,12 @@ jobs:
       run: |
         echo "#!/usr/bin/make -f" > ~/hsm-engine-deb/debian/rules
         echo "%:" >> ~/hsm-engine-deb/debian/rules
-        echo "	dh \$@" >> ~/hsm-engine-deb/debian/rules
+        echo "	dh \$@" >> ~/hsm-engine-deb/debian/rules  # Используем табуляцию перед dh
         chmod +x ~/hsm-engine-deb/debian/rules
+
+    - name: Create debian/compat
+      run: |
+        echo "13" > ~/hsm-engine-deb/debian/compat  # Уровень совместимости debhelper
 
     - name: Create Source Tarball
       run: |
