@@ -18,6 +18,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libssl-dev libcurl4-openssl-dev libjson-c-dev cmake devscripts dpkg-dev gnupg lintian debhelper-compat
 
+    - name: Import GPG key (check early)
+      run: |
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import || exit 1
+        gpg --list-keys || exit 1
+
     - name: Build HSM Engine
       run: |
         cd src
@@ -37,6 +42,7 @@ jobs:
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
         echo "Maintainer: Andrey V <andrey@kima.finance>" >> ~/hsm-engine-deb/debian/control
         echo "Build-Depends: debhelper-compat (= 13), cmake, libssl-dev, libcurl4-openssl-dev, libjson-c-dev" >> ~/hsm-engine-deb/debian/control
+        echo "" >> ~/hsm-engine-deb/debian/control
         echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
         echo "Architecture: amd64" >> ~/hsm-engine-deb/debian/control
         echo "Depends: \${shlibs:Depends}, \${misc:Depends}" >> ~/hsm-engine-deb/debian/control
@@ -73,11 +79,6 @@ jobs:
       run: |
         cd ~/hsm-engine-deb
         debuild -S -sa
-
-    - name: Import GPG key
-      run: |
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-        gpg --list-keys
 
     - name: Sign and Upload to PPA
       env:
