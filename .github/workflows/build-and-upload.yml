@@ -30,7 +30,8 @@ jobs:
       run: |
         mkdir -p ~/hsm-engine-deb/DEBIAN
         mkdir -p ~/hsm-engine-deb/debian
-        echo "Package: hsm-engine" > ~/hsm-engine-deb/debian/control
+        echo "Source: hsm-engine" > ~/hsm-engine-deb/debian/control  # Добавляем поле Source
+        echo "Package: hsm-engine" >> ~/hsm-engine-deb/debian/control
         echo "Version: 1.0-1" >> ~/hsm-engine-deb/debian/control
         echo "Section: utils" >> ~/hsm-engine-deb/debian/control
         echo "Priority: optional" >> ~/hsm-engine-deb/debian/control
